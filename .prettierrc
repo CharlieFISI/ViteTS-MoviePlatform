@@ -1,0 +1,18 @@
+{
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "bracketSameLine": false,
+  "htmlWhitespaceSensitivity": "ignore",
+  "singleAttributePerLine": true,
+  "arrowParens": "always",
+  "trailingComma": "none",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "plugins": [
+    "prettier-plugin-organize-attributes",
+    "prettier-plugin-css-order",
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-tailwindcss"
+  ]
+}
