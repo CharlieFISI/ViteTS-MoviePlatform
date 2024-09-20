@@ -29,6 +29,11 @@ export const fetchTrendingMovies = async (): Promise<Movie[]> => {
   return data.results;
 };
 
+export const fetchMovieDetails = async (id: number): Promise<Movie> => {
+  const data = await fetchFromAPI(`/movie/${id}`);
+  return data;
+};
+
 export const fetchNewReleases = async (
   type: 'movie' | 'tv'
 ): Promise<Movie[]> => {

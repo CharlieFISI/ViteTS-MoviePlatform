@@ -8,8 +8,8 @@ import {
   fetchTrendingMovies
 } from '../services/api';
 import MovieCard from './MovieCard';
+import { MovieSectionSkeleton } from './skeletons/MovieSectionSkeleton';
 
-const LOADING_MESSAGE = 'Cargando...';
 const ERROR_MESSAGE = 'Hubo un error al cargar los datos.';
 
 interface MovieSectionProps {
@@ -40,7 +40,7 @@ const MovieSection = ({ title, type }: MovieSectionProps) => {
     }
   });
 
-  if (isLoading) return <div>{LOADING_MESSAGE}</div>;
+  if (isLoading) return <MovieSectionSkeleton />;
   if (error) return <div>{ERROR_MESSAGE}</div>;
   if (!movies || movies.length === 0) return null;
 
