@@ -6,9 +6,9 @@ interface RecentlyUpdatedMovieCardProps {
   movie: Movie;
 }
 
-export const RecentlyUpdatedMovieCard: React.FC<
-  RecentlyUpdatedMovieCardProps
-> = ({ movie }) => {
+export const RecentlyUpdatedMovieCard = ({
+  movie
+}: RecentlyUpdatedMovieCardProps) => {
   return (
     <Link
       to={navigateToMovieDetails(movie.id.toString())}

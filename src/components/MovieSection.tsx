@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react';
-import React from 'react';
 import type { Movie } from '../models/Movie';
 import {
   fetchNewReleases,
@@ -18,7 +17,7 @@ interface MovieSectionProps {
   type: 'trending' | 'newMovies' | 'newSeries' | 'recommended';
 }
 
-const MovieSection: React.FC<MovieSectionProps> = ({ title, type }) => {
+const MovieSection = ({ title, type }: MovieSectionProps) => {
   const {
     data: movies,
     isLoading,
