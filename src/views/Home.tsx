@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
-import HeroSection from "../components/HeroSection";
-import MovieSection from "../components/MovieSection";
+import React, { useEffect, useState } from 'react';
+import Header from '../components/Header';
+import HeroSection from '../components/HeroSection';
+import MovieSection from '../components/MovieSection';
+import type { Movie } from '../models/Movie';
 import {
-  fetchTrendingMovies,
   fetchNewReleases,
   fetchRecommendedMovies,
-} from "../services/api";
-import type { Movie } from "../models/Movie";
+  fetchTrendingMovies
+} from '../services/api';
 
 const Home: React.FC = () => {
   const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
@@ -21,16 +21,16 @@ const Home: React.FC = () => {
         const trending = await fetchTrendingMovies();
         setTrendingMovies(trending);
 
-        const newMovies = await fetchNewReleases("movie");
+        const newMovies = await fetchNewReleases('movie');
         setNewReleaseMovies(newMovies);
 
-        const newSeries = await fetchNewReleases("tv");
+        const newSeries = await fetchNewReleases('tv');
         setNewReleaseSeries(newSeries);
 
         const recommended = await fetchRecommendedMovies();
         setRecommendedMovies(recommended);
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        console.error('Error fetching movies:', error);
       }
     };
 
@@ -38,7 +38,7 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className='min-h-screen text-white bg-black'>
+    <div className='min-h-screen bg-black text-white'>
       <Header />
       <main>
         <HeroSection movies={trendingMovies} />
@@ -46,10 +46,22 @@ const Home: React.FC = () => {
           title='Recently Updated'
           movies={trendingMovies.slice(0, 5)}
         />
-        <MovieSection title='Trending' movies={trendingMovies} />
-        <MovieSection title='New Release - Movies' movies={newReleaseMovies} />
-        <MovieSection title='New Release - Series' movies={newReleaseSeries} />
-        <MovieSection title='Recommended' movies={recommendedMovies} />
+        <MovieSection
+          title='Trending'
+          movies={trendingMovies}
+        />
+        <MovieSection
+          title='New Release - Movies'
+          movies={newReleaseMovies}
+        />
+        <MovieSection
+          title='New Release - Series'
+          movies={newReleaseSeries}
+        />
+        <MovieSection
+          title='Recommended'
+          movies={recommendedMovies}
+        />
       </main>
     </div>
   );

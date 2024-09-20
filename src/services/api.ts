@@ -1,14 +1,14 @@
-import { Movie } from "../models/Movie";
+import { Movie } from '../models/Movie';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
-const BASE_URL = "https://api.themoviedb.org/3";
+const BASE_URL = 'https://api.themoviedb.org/3';
 
 const options = {
-  method: "GET",
+  method: 'GET',
   headers: {
-    accept: "application/json",
-    Authorization: `Bearer ${API_KEY}`,
-  },
+    accept: 'application/json',
+    Authorization: `Bearer ${API_KEY}`
+  }
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,24 +20,24 @@ async function fetchFromAPI(endpoint: string): Promise<any> {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error('Error fetching data:', error);
     throw error;
   }
 }
 
 export const fetchTrendingMovies = async (): Promise<Movie[]> => {
-  const data = await fetchFromAPI("/trending/movie/week");
+  const data = await fetchFromAPI('/trending/movie/week');
   return data.results;
 };
 
 export const fetchNewReleases = async (
-  type: "movie" | "tv"
+  type: 'movie' | 'tv'
 ): Promise<Movie[]> => {
   const data = await fetchFromAPI(`/${type}/popular`);
   return data.results;
 };
 
 export const fetchRecommendedMovies = async (): Promise<Movie[]> => {
-  const data = await fetchFromAPI("/movie/top_rated");
+  const data = await fetchFromAPI('/movie/top_rated');
   return data.results;
 };
