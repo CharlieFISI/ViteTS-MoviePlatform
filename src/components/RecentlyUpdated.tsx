@@ -4,26 +4,32 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RecentlyUpdatedMovieCard } from './RecentlyUpdatedMovieCard';
 
-export const RecentlyUpdated = ({}) => {
+const QUERY_KEY = 'recentlyUpdated';
+const LOADING_MESSAGE = 'Cargando...';
+const ERROR_MESSAGE = 'Hubo un error al cargar los datos.';
+
+export const RecentlyUpdated = () => {
   const {
-    data: trendingMovies,
-    isPending,
+    data: movies,
+    isLoading,
     error
   } = useQuery({
-    queryKey: ['recently-updated'],
+    queryKey: [QUERY_KEY],
     queryFn: fetchTrendingMovies
   });
 
-  if (isPending) return 'loading...';
+  if (isLoading) return <div aria-live='polite'>{LOADING_MESSAGE}</div>;
+  if (error) return <div aria-live='polite'>{ERROR_MESSAGE}</div>;
+  if (!movies || movies.length === 0) return null;
 
   return (
     <section className='mb-12'>
-      <div className='mb-4 flex items-center justify-between'>
+      <div className='flex items-center justify-between mb-4'>
         <h2 className='text-2xl font-semibold'>Recently Updated</h2>
       </div>
       <div className='flex'>
         <div className='grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4'>
-          {trendingMovies?.slice(0, 4).map((movie, index) => (
+          {movies?.slice(0, 4).map((movie) => (
             <RecentlyUpdatedMovieCard
               key={movie.id}
               movie={movie}
@@ -32,9 +38,10 @@ export const RecentlyUpdated = ({}) => {
         </div>
         <Link
           to={'#'}
-          className='ml-auto flex h-20 w-20 items-center justify-center rounded-full bg-white'
+          className='flex items-center justify-center w-20 h-20 ml-auto bg-white rounded-full'
+          aria-label='Ver más películas actualizadas recientemente'
         >
-          <ArrowRight className='h-9 w-9 text-black' />
+          <ArrowRight className='text-black h-9 w-9' />
         </Link>
       </div>
     </section>
