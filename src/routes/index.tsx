@@ -1,8 +1,8 @@
 import { Layout } from '@/components/Layout';
-import Home from '@/views/Home';
+import { Home } from '@/views/Home';
 import { MovieDetails } from '@/views/MovieDetails';
+import { NotFound } from '@/views/NotFound';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import NotFound from '../views/NotFound';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +26,4 @@ const router = createBrowserRouter([
   }
 ]);
 
-const App = () => <RouterProvider router={router} />;
-
-export default App;
+export const AppRoutes = () => <RouterProvider router={router} />;

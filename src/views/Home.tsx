@@ -1,41 +1,37 @@
 import { RecentlyUpdated } from '@/components/RecentlyUpdated';
-import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import HeroSection from '../components/HeroSection';
 import MovieSection from '../components/MovieSection';
-import type { Movie } from '../models/Movie';
 import {
   fetchNewReleases,
   fetchRecommendedMovies,
   fetchTrendingMovies
 } from '../services/api';
 
-const Home: React.FC = () => {
-  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
-  const [newReleaseMovies, setNewReleaseMovies] = useState<Movie[]>([]);
-  const [newReleaseSeries, setNewReleaseSeries] = useState<Movie[]>([]);
-  const [recommendedMovies, setRecommendedMovies] = useState<Movie[]>([]);
+export const Home = () => {
+  const { data: newReleaseMovies } = useQuery({
+    queryKey: ['newReleaseMovies'],
+    queryFn: fetchTrendingMovies,
+    initialData: []
+  });
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const trending = await fetchTrendingMovies();
-        setTrendingMovies(trending);
+  const { data: trendingMovies } = useQuery({
+    queryKey: ['recently-updated'],
+    queryFn: () => fetchNewReleases('movie'),
+    initialData: []
+  });
 
-        const newMovies = await fetchNewReleases('movie');
-        setNewReleaseMovies(newMovies);
+  const { data: newReleaseSeries } = useQuery({
+    queryKey: ['newReleaseSeries'],
+    queryFn: () => fetchNewReleases('tv'),
+    initialData: []
+  });
 
-        const newSeries = await fetchNewReleases('tv');
-        setNewReleaseSeries(newSeries);
-
-        const recommended = await fetchRecommendedMovies();
-        setRecommendedMovies(recommended);
-      } catch (error) {
-        console.error('Error fetching movies:', error);
-      }
-    };
-
-    fetchMovies();
-  }, []);
+  const { data: recommendedMovies } = useQuery({
+    queryKey: ['recommendedMovies'],
+    queryFn: fetchRecommendedMovies,
+    initialData: []
+  });
 
   return (
     <>
@@ -60,5 +56,3 @@ const Home: React.FC = () => {
     </>
   );
 };
-
-export default Home;

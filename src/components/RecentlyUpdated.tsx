@@ -1,25 +1,20 @@
-import { Movie } from '@/models/Movie';
 import { fetchTrendingMovies } from '@/services/api';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { RecentlyUpdatedMovieCard } from './RecentlyUpdatedMovieCard';
 
 export const RecentlyUpdated = ({}) => {
-  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
+  const {
+    data: trendingMovies,
+    isPending,
+    error
+  } = useQuery({
+    queryKey: ['recently-updated'],
+    queryFn: fetchTrendingMovies
+  });
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const trending = await fetchTrendingMovies();
-        setTrendingMovies(trending);
-      } catch (error) {
-        console.error('Error fetching movies:', error);
-      }
-    };
-
-    fetchMovies();
-  }, []);
+  if (isPending) return 'loading...';
 
   return (
     <section className='mb-12'>
@@ -28,7 +23,7 @@ export const RecentlyUpdated = ({}) => {
       </div>
       <div className='flex'>
         <div className='grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4'>
-          {trendingMovies.slice(0, 4).map((movie, index) => (
+          {trendingMovies?.slice(0, 4).map((movie, index) => (
             <RecentlyUpdatedMovieCard
               key={movie.id}
               movie={movie}

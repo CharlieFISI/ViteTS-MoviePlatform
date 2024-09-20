@@ -1,8 +1,12 @@
-import React from 'react';
-import AppRoutes from './routes';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AppRoutes } from './routes';
 
-const App: React.FC = () => {
-  return <AppRoutes />;
+const queryClient = new QueryClient();
+
+export const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppRoutes />
+    </QueryClientProvider>
+  );
 };
-
-export default App;
