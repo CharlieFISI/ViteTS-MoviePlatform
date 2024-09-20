@@ -11,7 +11,6 @@ const options = {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchFromAPI(endpoint: string): Promise<any> {
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, options);

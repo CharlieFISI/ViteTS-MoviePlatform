@@ -1,57 +1,27 @@
 import { RecentlyUpdated } from '@/components/RecentlyUpdated';
-import { useQuery } from '@tanstack/react-query';
 import HeroSection from '../components/HeroSection';
 import MovieSection from '../components/MovieSection';
-import {
-  fetchNewReleases,
-  fetchRecommendedMovies,
-  fetchTrendingMovies
-} from '../services/api';
 
 export const Home = () => {
-  const { data: newReleaseMovies } = useQuery({
-    queryKey: ['newReleaseMovies'],
-    queryFn: fetchTrendingMovies,
-    initialData: []
-  });
-
-  const { data: trendingMovies } = useQuery({
-    queryKey: ['recently-updated'],
-    queryFn: () => fetchNewReleases('movie'),
-    initialData: []
-  });
-
-  const { data: newReleaseSeries } = useQuery({
-    queryKey: ['newReleaseSeries'],
-    queryFn: () => fetchNewReleases('tv'),
-    initialData: []
-  });
-
-  const { data: recommendedMovies } = useQuery({
-    queryKey: ['recommendedMovies'],
-    queryFn: fetchRecommendedMovies,
-    initialData: []
-  });
-
   return (
     <>
-      <HeroSection movies={trendingMovies} />
+      <HeroSection />
       <RecentlyUpdated />
       <MovieSection
         title='Trending'
-        movies={trendingMovies}
+        type='trending'
       />
       <MovieSection
         title='New Release - Movies'
-        movies={newReleaseMovies}
+        type='newMovies'
       />
       <MovieSection
         title='New Release - Series'
-        movies={newReleaseSeries}
+        type='newSeries'
       />
       <MovieSection
         title='Recommended'
-        movies={recommendedMovies}
+        type='recommended'
       />
     </>
   );

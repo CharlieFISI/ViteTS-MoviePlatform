@@ -18,8 +18,8 @@ const Header = () => {
   ];
 
   return (
-    <header className='bg-black px-6 pb-9 pt-6'>
-      <div className='container mx-auto flex items-center justify-center'>
+    <header className='px-6 pt-6 bg-black pb-9'>
+      <div className='container flex items-center justify-center mx-auto'>
         <nav className='flex items-center space-x-6'>
           {navItems.map((item, index) => (
             <React.Fragment key={item.name}>
@@ -31,7 +31,7 @@ const Header = () => {
               >
                 {item.name}
                 {location.pathname === item.path && (
-                  <span className='absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 transform rounded-full bg-red-500' />
+                  <span className='absolute w-1 h-1 transform -translate-x-1/2 bg-red-500 rounded-full -bottom-1 left-1/2' />
                 )}
               </Link>
               {index === 2 && (
@@ -39,10 +39,10 @@ const Header = () => {
                   <Input
                     type='search'
                     placeholder='Search movies......'
-                    className='h-full w-full rounded-full border-0 bg-white bg-opacity-10 py-4 pl-6 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-20'
+                    className='w-full h-full py-4 pl-6 pr-10 text-white bg-white border-0 rounded-full bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-20'
                   />
                   <Search
-                    className='absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400'
+                    className='absolute text-gray-400 transform -translate-y-1/2 right-3 top-1/2'
                     size={20}
                   />
                 </div>
@@ -50,7 +50,7 @@ const Header = () => {
             </React.Fragment>
           ))}
         </nav>
-        <div className='flex items-center space-x-2 px-6'>
+        <div className='flex items-center px-6 space-x-2'>
           <Button
             variant='ghost'
             className='text-lg font-semibold text-white hover:text-black'

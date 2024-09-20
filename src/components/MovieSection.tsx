@@ -1,18 +1,53 @@
 import { Button } from '@/components/ui/button';
+import { useQuery } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
 import type { Movie } from '../models/Movie';
+import {
+  fetchNewReleases,
+  fetchRecommendedMovies,
+  fetchTrendingMovies
+} from '../services/api';
 import MovieCard from './MovieCard';
+
+const LOADING_MESSAGE = 'Cargando...';
+const ERROR_MESSAGE = 'Hubo un error al cargar los datos.';
 
 interface MovieSectionProps {
   title: string;
-  movies: Movie[];
+  type: 'trending' | 'newMovies' | 'newSeries' | 'recommended';
 }
 
-const MovieSection: React.FC<MovieSectionProps> = ({ title, movies }) => {
+const MovieSection: React.FC<MovieSectionProps> = ({ title, type }) => {
+  const {
+    data: movies,
+    isLoading,
+    error
+  } = useQuery<Movie[]>({
+    queryKey: [type],
+    queryFn: () => {
+      switch (type) {
+        case 'trending':
+          return fetchTrendingMovies();
+        case 'newMovies':
+          return fetchNewReleases('movie');
+        case 'newSeries':
+          return fetchNewReleases('tv');
+        case 'recommended':
+          return fetchRecommendedMovies();
+        default:
+          throw new Error(`Invalid type: ${type}`);
+      }
+    }
+  });
+
+  if (isLoading) return <div>{LOADING_MESSAGE}</div>;
+  if (error) return <div>{ERROR_MESSAGE}</div>;
+  if (!movies || movies.length === 0) return null;
+
   return (
     <section className='mb-12'>
-      <div className='mb-4 flex items-center justify-between'>
+      <div className='flex items-center justify-between mb-4'>
         <h2 className='text-2xl font-semibold'>{title}</h2>
         <Button
           variant='link'

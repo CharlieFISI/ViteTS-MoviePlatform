@@ -6,9 +6,9 @@ interface RecentlyUpdatedMovieCardProps {
   movie: Movie;
 }
 
-export const RecentlyUpdatedMovieCard = ({
-  movie
-}: RecentlyUpdatedMovieCardProps) => {
+export const RecentlyUpdatedMovieCard: React.FC<
+  RecentlyUpdatedMovieCardProps
+> = ({ movie }) => {
   return (
     <Link
       to={navigateToMovieDetails(movie.id.toString())}
@@ -18,7 +18,7 @@ export const RecentlyUpdatedMovieCard = ({
         <img
           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
           alt={movie.title}
-          className='w-16 rounded object-cover'
+          className='object-cover w-16 rounded'
         />
         <div className='p-4'>
           <h3 className='font-semibold'>{movie.title}</h3>
