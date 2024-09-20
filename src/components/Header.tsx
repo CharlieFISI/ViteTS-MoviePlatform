@@ -5,7 +5,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '../routes/constants';
 
-const Header: React.FC = () => {
+const Header = () => {
   const location = useLocation();
 
   const navItems = [
