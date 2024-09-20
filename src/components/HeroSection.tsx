@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import type { Movie } from '../models/Movie';
 import { navigateToMovieDetails } from '../routes/navigation';
 import { fetchMovieDetails, fetchTrendingMovies } from '../services/api';
+import { HeroSectionSkeleton } from './skeletons/HeroSectionSkeleton';
 
 const HeroSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -43,7 +44,7 @@ const HeroSection = () => {
     }
   }, [trendingMovies]);
 
-  if (isLoadingTrending || isLoadingDetails) return <div>Loading...</div>;
+  if (isLoadingTrending || isLoadingDetails) return <HeroSectionSkeleton />;
   if (errorTrending || errorDetails) return <div>Error fetching movies</div>;
   if (!trendingMovies || trendingMovies.length === 0 || !movieDetails)
     return null;
