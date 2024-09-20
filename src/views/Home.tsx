@@ -1,6 +1,5 @@
 import { RecentlyUpdated } from '@/components/RecentlyUpdated';
 import React, { useEffect, useState } from 'react';
-import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
 import MovieSection from '../components/MovieSection';
 import type { Movie } from '../models/Movie';
@@ -39,29 +38,26 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className='min-h-screen bg-black text-white'>
-      <Header />
-      <main>
-        <HeroSection movies={trendingMovies} />
-        <RecentlyUpdated />
-        <MovieSection
-          title='Trending'
-          movies={trendingMovies}
-        />
-        <MovieSection
-          title='New Release - Movies'
-          movies={newReleaseMovies}
-        />
-        <MovieSection
-          title='New Release - Series'
-          movies={newReleaseSeries}
-        />
-        <MovieSection
-          title='Recommended'
-          movies={recommendedMovies}
-        />
-      </main>
-    </div>
+    <>
+      <HeroSection movies={trendingMovies} />
+      <RecentlyUpdated />
+      <MovieSection
+        title='Trending'
+        movies={trendingMovies}
+      />
+      <MovieSection
+        title='New Release - Movies'
+        movies={newReleaseMovies}
+      />
+      <MovieSection
+        title='New Release - Series'
+        movies={newReleaseSeries}
+      />
+      <MovieSection
+        title='Recommended'
+        movies={recommendedMovies}
+      />
+    </>
   );
 };
 
