@@ -1,3 +1,4 @@
+import { RecentlyUpdated } from '@/components/RecentlyUpdated';
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
@@ -42,10 +43,7 @@ const Home: React.FC = () => {
       <Header />
       <main>
         <HeroSection movies={trendingMovies} />
-        <MovieSection
-          title='Recently Updated'
-          movies={trendingMovies.slice(0, 5)}
-        />
+        <RecentlyUpdated />
         <MovieSection
           title='Trending'
           movies={trendingMovies}
