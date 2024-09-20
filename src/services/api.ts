@@ -24,6 +24,11 @@ async function fetchFromAPI(endpoint: string): Promise<any> {
   }
 }
 
+export const fetchMovieDetails = async (id: number): Promise<Movie> => {
+  const data = await fetchFromAPI(`/movie/${id}`);
+  return data;
+};
+
 export const fetchTrendingMovies = async (): Promise<Movie[]> => {
   const data = await fetchFromAPI('/trending/movie/week');
   return data.results;
