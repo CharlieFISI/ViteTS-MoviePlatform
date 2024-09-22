@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { Clock, Play, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { Movie } from '../models/Movie';
+import { Media, Movie } from '../models/Media';
 import { navigateToMovieDetails } from '../routes/navigation';
-import { fetchMovieDetails, fetchTrendingMovies } from '../services/api';
+import { fetchMovieDetails, fetchTrendingMedia } from '../services/api';
 import { HeroSectionSkeleton } from './skeletons/HeroSectionSkeleton';
 
 const HeroSection = () => {
@@ -13,21 +13,29 @@ const HeroSection = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const {
-    data: trendingMovies,
+    data: trendingMedia,
     isLoading: isLoadingTrending,
     error: errorTrending
-  } = useQuery<Movie[]>({
-    queryKey: ['trendingMovies'],
-    queryFn: fetchTrendingMovies
+  } = useQuery<Media[]>({
+    queryKey: ['trendingMedia'],
+    queryFn: fetchTrendingMedia
   });
+
+  const trendingMovies = useMemo(
+    () =>
+      trendingMedia?.filter(
+        (item): item is Movie => item.media_type === 'movie'
+      ) || [],
+    [trendingMedia]
+  );
 
   const {
     data: movieDetails,
     isLoading: isLoadingDetails,
     error: errorDetails
   } = useQuery<Movie>({
-    queryKey: ['movieDetails', trendingMovies?.[currentIndex]?.id],
-    queryFn: () => fetchMovieDetails(trendingMovies![currentIndex]!.id),
+    queryKey: ['movieDetails', trendingMovies[currentIndex]?.id],
+    queryFn: () => fetchMovieDetails(trendingMovies[currentIndex].id),
     enabled: !!trendingMovies && !!trendingMovies[currentIndex]?.id
   });
 
@@ -66,14 +74,14 @@ const HeroSection = () => {
         <h1 className='mb-2 text-5xl font-bold leading-none tracking-tight text-white'>
           {movie.title}
         </h1>
-        <div className='flex flex-wrap items-center mb-2 space-x-4'>
-          {movie.genres &&
-            movie.genres.slice(0, 3).map((genre) => (
+        <div className='mb-2 flex flex-wrap items-center space-x-4'>
+          {movie.genre &&
+            movie.genre.slice(0, 3).map((genreName, index) => (
               <span
-                key={genre.id}
-                className='px-2 py-1 text-sm text-white bg-white rounded bg-opacity-20'
+                key={index}
+                className='rounded bg-white bg-opacity-20 px-2 py-1 text-sm text-white'
               >
-                {genre.name}
+                {genreName}
               </span>
             ))}
           <span className='flex items-center text-white'>
@@ -97,9 +105,9 @@ const HeroSection = () => {
           {movie.overview}
         </p>
       </div>
-      <div className='absolute flex space-x-4 transform -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2'>
+      <div className='absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 transform space-x-4'>
         <Link to={navigateToMovieDetails(movie.id.toString())}>
-          <Button className='px-8 py-6 text-lg text-white bg-red-600 hover:bg-red-700'>
+          <Button className='bg-red-600 px-8 py-6 text-lg text-white hover:bg-red-700'>
             <Play
               size={24}
               className='mr-2'
@@ -109,7 +117,7 @@ const HeroSection = () => {
         </Link>
         <Button
           variant='outline'
-          className='px-8 py-6 text-lg text-white bg-transparent border-white hover:bg-white hover:text-black'
+          className='border-white bg-transparent px-8 py-6 text-lg text-white hover:bg-white hover:text-black'
         >
           <Plus
             size={24}
@@ -118,7 +126,7 @@ const HeroSection = () => {
           Watch Later
         </Button>
       </div>
-      <div className='absolute flex space-x-2 transform -translate-x-1/2 bottom-4 left-1/2'>
+      <div className='absolute bottom-4 left-1/2 flex -translate-x-1/2 transform space-x-2'>
         {trendingMovies.slice(0, 5).map((_, index) => (
           <button
             key={index}

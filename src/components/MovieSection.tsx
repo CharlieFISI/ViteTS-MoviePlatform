@@ -1,16 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react';
-import type { Movie } from '../models/Movie';
+import { Media } from '../models/Media';
 import {
   fetchNewReleases,
-  fetchRecommendedMovies,
-  fetchTrendingMovies
+  fetchRecommendedMedia,
+  fetchTrendingMedia
 } from '../services/api';
 import MovieCard from './MovieCard';
 import { MovieSectionSkeleton } from './skeletons/MovieSectionSkeleton';
-
-const ERROR_MESSAGE = 'Hubo un error al cargar los datos.';
 
 interface MovieSectionProps {
   title: string;
@@ -19,21 +17,21 @@ interface MovieSectionProps {
 
 const MovieSection = ({ title, type }: MovieSectionProps) => {
   const {
-    data: movies,
+    data: mediaItems,
     isLoading,
     error
-  } = useQuery<Movie[]>({
+  } = useQuery<Media[]>({
     queryKey: [type],
     queryFn: () => {
       switch (type) {
         case 'trending':
-          return fetchTrendingMovies();
+          return fetchTrendingMedia();
         case 'newMovies':
           return fetchNewReleases('movie');
         case 'newSeries':
           return fetchNewReleases('tv');
         case 'recommended':
-          return fetchRecommendedMovies();
+          return fetchRecommendedMedia(1, 'movie');
         default:
           throw new Error(`Invalid type: ${type}`);
       }
@@ -41,25 +39,25 @@ const MovieSection = ({ title, type }: MovieSectionProps) => {
   });
 
   if (isLoading) return <MovieSectionSkeleton />;
-  if (error) return <div>{ERROR_MESSAGE}</div>;
-  if (!movies || movies.length === 0) return null;
+  if (error) return <div>Error fetching media</div>;
+  if (!mediaItems || mediaItems.length === 0) return null;
 
   return (
-    <section className='mb-12'>
-      <div className='flex items-center justify-between mb-4'>
-        <h2 className='text-2xl font-semibold'>{title}</h2>
+    <section className='mb-12 px-6'>
+      <div className='mb-4 flex items-center justify-between'>
+        <h2 className='text-2xl font-bold text-white'>{title}</h2>
         <Button
           variant='link'
           className='text-gray-400 hover:text-white'
         >
-          View All <ChevronRight size={20} />
+          View all <ChevronRight size={20} />
         </Button>
       </div>
-      <div className='grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
-        {movies.map((movie) => (
+      <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5'>
+        {mediaItems.slice(0, 5).map((item) => (
           <MovieCard
-            key={movie.id}
-            movie={movie}
+            key={item.id}
+            item={item}
           />
         ))}
       </div>

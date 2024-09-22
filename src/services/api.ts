@@ -1,4 +1,4 @@
-import { Movie } from '../models/Movie';
+import { Media, Movie, SerieTV } from '../models/Media';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -24,24 +24,34 @@ async function fetchFromAPI(endpoint: string): Promise<any> {
   }
 }
 
-export const fetchMovieDetails = async (id: number): Promise<Movie> => {
-  const data = await fetchFromAPI(`/movie/${id}`);
-  return data;
-};
-
-export const fetchTrendingMovies = async (): Promise<Movie[]> => {
-  const data = await fetchFromAPI('/trending/movie/week');
+export const fetchTrendingMedia = async (): Promise<Media[]> => {
+  const data = await fetchFromAPI('/trending/all/week');
   return data.results;
 };
 
 export const fetchNewReleases = async (
   type: 'movie' | 'tv'
-): Promise<Movie[]> => {
+): Promise<Media[]> => {
   const data = await fetchFromAPI(`/${type}/popular`);
-  return data.results;
+  return data.results.map((item: any) => ({ ...item, media_type: type }));
 };
 
-export const fetchRecommendedMovies = async (): Promise<Movie[]> => {
-  const data = await fetchFromAPI('/movie/top_rated');
-  return data.results;
+export const fetchRecommendedMedia = async (
+  id: number,
+  mediaType: 'movie' | 'tv'
+): Promise<Media[]> => {
+  const endpoint = `/${mediaType}/${id}/recommendations`;
+  const data = await fetchFromAPI(endpoint);
+  return data.results.map((item: any) => ({
+    ...item,
+    media_type: item.media_type || mediaType
+  }));
+};
+
+export const fetchMovieDetails = async (id: number): Promise<Movie> => {
+  return fetchFromAPI(`/movie/${id}`);
+};
+
+export const fetchTVDetails = async (id: number): Promise<SerieTV> => {
+  return fetchFromAPI(`/tv/${id}`);
 };
