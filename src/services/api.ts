@@ -41,3 +41,9 @@ export const fetchRecommendedMovies = async (): Promise<Movie[]> => {
   const data = await fetchFromAPI('/movie/top_rated');
   return data.results;
 };
+
+export const fetchMovieDetails = async (movieId: string): Promise<Movie> => {
+  const data = await fetchFromAPI(`/movie/${movieId}`);
+  console.log(data);
+  return data;
+};
