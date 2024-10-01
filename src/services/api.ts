@@ -49,9 +49,11 @@ export const fetchRecommendedMedia = async (
 };
 
 export const fetchMovieDetails = async (id: number): Promise<Movie> => {
-  return fetchFromAPI(`/movie/${id}`);
+  const data = await fetchFromAPI(`/movie/${id}`);
+  return { ...data, media_type: 'movie' };
 };
 
 export const fetchTVDetails = async (id: number): Promise<SerieTV> => {
-  return fetchFromAPI(`/tv/${id}`);
+  const data = await fetchFromAPI(`/tv/${id}`);
+  return { ...data, media_type: 'tv' };
 };

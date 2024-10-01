@@ -18,8 +18,8 @@ const Header = () => {
   ];
 
   return (
-    <header className='px-6 pt-6 bg-black pb-9'>
-      <div className='container flex items-center justify-center mx-auto'>
+    <header className='pt-6 bg-black pb-9'>
+      <div className='flex items-center justify-center'>
         <nav className='flex items-center space-x-6'>
           {navItems.map((item, index) => (
             <React.Fragment key={item.name}>

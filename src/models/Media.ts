@@ -5,13 +5,16 @@ export interface MediaItem {
   overview: string;
   vote_average: number;
   media_type: 'movie' | 'tv';
+  genres: {
+    id: number;
+    name: string;
+  }[];
 }
 
 export interface Movie extends MediaItem {
   title: string;
   release_date: string;
   runtime: number;
-  genre: string[];
   media_type: 'movie';
 }
 
@@ -19,6 +22,10 @@ export interface SerieTV extends MediaItem {
   name: string;
   first_air_date: string;
   number_of_seasons: number;
+  last_episode_to_air: {
+    episode_number: number;
+    season_number: number;
+  };
   media_type: 'tv';
 }
 
