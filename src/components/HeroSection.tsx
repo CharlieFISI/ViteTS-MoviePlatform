@@ -2,14 +2,17 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { Play, Plus } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Media, Movie } from '../models/Media';
 import { fetchMovieDetails, fetchTrendingMedia } from '../services/api';
+import { setCurrentIndex, setIsImageLoaded } from '../store/heroSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { HeroSectionSkeleton } from './skeletons/HeroSectionSkeleton';
 
 export const HeroSection = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const dispatch = useAppDispatch();
+  const currentIndex = useAppSelector((state) => state.hero.currentIndex);
+  const isImageLoaded = useAppSelector((state) => state.hero.isImageLoaded);
 
   const {
     data: trendingMedia,
@@ -43,15 +46,15 @@ export const HeroSection = () => {
   useEffect(() => {
     if (trendingMovies.length > 0) {
       const timer = setInterval(() => {
-        setCurrentIndex(
-          (prevIndex) => (prevIndex + 1) % Math.min(trendingMovies.length, 5)
-        );
-        setIsImageLoaded(false);
+        const newIndex =
+          (currentIndex + 1) % Math.min(trendingMovies.length, 5);
+        dispatch(setCurrentIndex(newIndex));
+        dispatch(setIsImageLoaded(false));
       }, 7000);
 
       return () => clearInterval(timer);
     }
-  }, [trendingMovies]);
+  }, [trendingMovies, currentIndex, dispatch]);
 
   if (isLoadingTrending || isLoadingDetails) return <HeroSectionSkeleton />;
   if (errorTrending || errorDetails) return <div>Error fetching movies</div>;
@@ -72,7 +75,7 @@ export const HeroSection = () => {
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
           isImageLoaded ? 'opacity-100' : 'opacity-0'
         }`}
-        onLoad={() => setIsImageLoaded(true)}
+        onLoad={() => dispatch(setIsImageLoaded(true))}
       />
       <div className='relative z-20 mx-auto flex h-full max-w-7xl flex-col justify-between px-4 py-12'>
         <div className='flex h-full flex-col items-center justify-center'>

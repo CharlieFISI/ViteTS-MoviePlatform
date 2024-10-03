@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Media, Movie, SerieTV } from '../models/Media';
 import {
   fetchMovieDetails,
@@ -10,6 +10,8 @@ import {
   fetchTrendingMedia,
   fetchTVDetails
 } from '../services/api';
+import { useAppDispatch, useAppSelector } from '../store/hooks'; // Hooks personalizados
+import { initializeTab, setActiveTab } from '../store/mediaSlice'; // Importa acciones de Redux
 import { MovieCard } from './MovieCard';
 
 type MovieSectionProps = {
@@ -17,10 +19,15 @@ type MovieSectionProps = {
   title: string;
 };
 
-export const MovieSection = ({ type, title }: MovieSectionProps) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'movies' | 'series'>(
-    type === 'newMovies' ? 'movies' : type === 'newSeries' ? 'series' : 'all'
-  );
+export function MovieSection({ type, title }: MovieSectionProps) {
+  const dispatch = useAppDispatch();
+  const activeTab = useAppSelector((state) => state.media.activeTab);
+
+  useEffect(() => {
+    const initialTab =
+      type === 'newMovies' ? 'movies' : type === 'newSeries' ? 'series' : 'all';
+    dispatch(initializeTab(initialTab)); // Inicializar el tab usando Redux
+  }, [type, dispatch]);
 
   const {
     data: mediaItems,
@@ -92,8 +99,9 @@ export const MovieSection = ({ type, title }: MovieSectionProps) => {
         {type === 'recommended' && (
           <Tabs
             value={activeTab}
-            onValueChange={(value) =>
-              setActiveTab(value as 'all' | 'movies' | 'series')
+            onValueChange={
+              (value) =>
+                dispatch(setActiveTab(value as 'all' | 'movies' | 'series')) // Usar Redux para cambiar el tab
             }
           >
             <TabsList>
@@ -110,7 +118,9 @@ export const MovieSection = ({ type, title }: MovieSectionProps) => {
         </Button>
       </div>
       <div
-        className={`grid gap-4 ${type === 'trending' ? 'grid-cols-3' : 'grid-cols-4'}`}
+        className={`grid gap-4 ${
+          type === 'trending' ? 'grid-cols-3' : 'grid-cols-4'
+        }`}
       >
         {mediaWithDetails.map((item) => (
           <MovieCard
@@ -122,4 +132,4 @@ export const MovieSection = ({ type, title }: MovieSectionProps) => {
       </div>
     </section>
   );
-};
+}

@@ -1,23 +1,21 @@
+import axios from 'axios';
 import { Media, Movie, SerieTV } from '../models/Media';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
 
-const options = {
-  method: 'GET',
+const apiClient = axios.create({
+  baseURL: BASE_URL,
   headers: {
     accept: 'application/json',
     Authorization: `Bearer ${API_KEY}`
   }
-};
+});
 
 async function fetchFromAPI(endpoint: string): Promise<any> {
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return await response.json();
+    const response = await apiClient.get(endpoint);
+    return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
     throw error;
