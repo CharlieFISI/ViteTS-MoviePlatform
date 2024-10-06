@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { Episode, Media, Movie, Season, SerieTV } from '../models/Media';
+import {
+  Episode,
+  Media,
+  Movie,
+  Season,
+  SerieTV,
+  VideoDetails
+} from '../models/Media';
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -231,4 +238,18 @@ export const fetchEpisodes = async (
 ): Promise<Episode[]> => {
   const data = await fetchFromAPI(`/tv/${seriesId}/season/${seasonNumber}`);
   return data.episodes;
+};
+
+export const fetchMovieVideos = async (
+  movieId: number
+): Promise<VideoDetails[]> => {
+  const response = await apiClient.get(`/movie/${movieId}/videos`);
+  return response.data.results;
+};
+
+export const fetchSeriesVideos = async (
+  seriesId: number
+): Promise<VideoDetails[]> => {
+  const response = await apiClient.get(`/tv/${seriesId}/videos`);
+  return response.data.results;
 };

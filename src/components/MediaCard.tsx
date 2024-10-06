@@ -1,7 +1,10 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Clock, Star } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { useQueries } from '@tanstack/react-query';
+import { Clock } from 'lucide-react';
+import { useState } from 'react';
 import { Media, Movie, SerieTV } from '../models/Media';
+import { fetchMovieVideos, fetchSeriesVideos } from '../services/api';
 
 interface MediaCardProps {
   item: Media;
@@ -20,104 +23,138 @@ const formatDuration = (minutes: number) => {
 };
 
 export const MediaCard = ({ item, cardType }: MediaCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const isMovie = item.media_type === 'movie';
   const title = isMovie ? (item as Movie).title : (item as SerieTV).name;
 
+  const videoQueries = useQueries({
+    queries: [
+      {
+        queryKey: ['movieVideos', item.id],
+        queryFn: () => fetchMovieVideos(item.id),
+        enabled: isMovie
+      },
+      {
+        queryKey: ['seriesVideos', item.id],
+        queryFn: () => fetchSeriesVideos(item.id),
+        enabled: !isMovie
+      }
+    ]
+  });
+
+  const movieVideos = videoQueries[0].data || [];
+  const seriesVideos = videoQueries[1].data || [];
+  const videoKey = isMovie ? movieVideos[0]?.key : seriesVideos[0]?.key;
+
+  const videoUrl = videoKey
+    ? `https://www.youtube.com/embed/${videoKey}`
+    : null;
+
+  const renderPreview = () => (
+    <div className='absolute inset-0 z-10 bg-black/75 p-4 text-white'>
+      <h3 className='text-lg font-bold'>{title}</h3>
+      <div className='flex items-center space-x-2'>
+        <span>
+          {new Date(
+            isMovie
+              ? (item as Movie).release_date
+              : (item as SerieTV).first_air_date
+          ).getFullYear()}
+        </span>
+        <span>•</span>
+        {isMovie ? (
+          <span>
+            <Clock className='mr-1 inline-block h-4 w-4' />{' '}
+            {formatDuration((item as Movie).runtime) || 'N/A'}
+          </span>
+        ) : (
+          <span>{(item as SerieTV).number_of_seasons} seasons</span>
+        )}
+      </div>
+      <div className='mt-2 flex flex-wrap gap-2'>
+        {item.genres.slice(0, 3).map((genre) => (
+          <Badge
+            key={genre.id}
+            variant='secondary'
+            className='text-xs'
+          >
+            {genre.name}
+          </Badge>
+        ))}
+      </div>
+      <p className='mt-4 text-sm'>{item.overview.slice(0, 100)}...</p>
+    </div>
+  );
+
   const renderTrendingCard = () => (
-    <Card className='overflow-hidden border-0 bg-transparent'>
-      <div className='relative'>
-        <img
-          src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-          alt={title}
-          className='h-auto w-full object-cover'
-        />
-        <div className='absolute left-2 top-2 flex items-center rounded bg-black/50 px-2 py-1'>
-          <Clock className='mr-1 h-4 w-4 text-white' />
-          <span className='text-xs text-white'>
-            {isMovie
-              ? `${formatDuration((item as Movie).runtime) || 'N/A'}`
-              : `${(item as SerieTV).number_of_seasons || 'N/A'} seasons`}
-          </span>
+    <div className='p-2'>
+      <Card
+        className='relative overflow-hidden rounded-lg border-0 bg-transparent'
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className='relative h-0 w-full pb-[56.25%]'>
+          {!isHovered ? (
+            <img
+              src={`https://image.tmdb.org/t/p/w780${item.backdrop_path}`}
+              alt={title}
+              className='absolute left-0 top-0 h-full w-full rounded-lg object-cover'
+            />
+          ) : (
+            videoUrl && (
+              <iframe
+                src={videoUrl}
+                className='absolute left-0 top-0 h-full w-full rounded-lg'
+                allow='fullscreen'
+                title='Video preview'
+              />
+            )
+          )}
         </div>
-        <div className='absolute right-2 top-2 flex items-center rounded bg-black/50 px-2 py-1'>
-          <Star className='mr-1 h-4 w-4 text-yellow-400' />
-          <span className='text-xs text-white'>
-            {item.vote_average.toFixed(1)}
-          </span>
+      </Card>
+
+      <div className='mt-2 px-2'>
+        <h3 className='truncate font-bold text-white'>{title}</h3>
+        <div className='mt-2 flex flex-wrap gap-2'>
+          {item.genres.slice(0, 3).map((genre) => (
+            <Badge
+              key={genre.id}
+              variant='secondary'
+              className='text-xs'
+            >
+              {genre.name}
+            </Badge>
+          ))}
         </div>
       </div>
-      <CardContent className='p-4'>
-        <h3 className='truncate font-bold text-white'>{title}</h3>
-        {item.genres && (
-          <div className='mt-2 flex flex-wrap gap-2'>
-            {item.genres.slice(0, 3).map((genre) => (
-              <Badge
-                key={genre.id}
-                variant='secondary'
-                className='text-xs'
-              >
-                {genre.name}
-              </Badge>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    </div>
   );
 
-  const renderNewMovieCard = () => (
-    <Card className='overflow-hidden border-0 bg-transparent'>
+  const renderPreviewCard = () => (
+    <Card
+      className='relative h-auto overflow-hidden border-0 bg-transparent'
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className='relative'>
         <img
           src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
           alt={title}
           className='h-auto w-full object-cover'
         />
+        {isHovered && renderPreview()}
       </div>
-      <CardContent className='p-4'>
-        <h3 className='truncate font-bold text-white'>{title}</h3>
-        <p className='mt-1 text-sm text-gray-300'>
-          {formatDuration((item as Movie).runtime) || 'N/A'}
-        </p>
-      </CardContent>
-    </Card>
-  );
-
-  const renderNewSeriesCard = () => (
-    <Card className='overflow-hidden border-0 bg-transparent'>
-      <div className='relative'>
-        <img
-          src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-          alt={title}
-          className='h-auto w-full object-cover'
-        />
-        {(item as SerieTV).last_episode_to_air && (
-          <div className='absolute left-2 top-2 rounded bg-black/50 px-2 py-1'>
-            <span className='text-xs text-white'>
-              EP {(item as SerieTV).last_episode_to_air.episode_number}
-            </span>
-          </div>
-        )}
-      </div>
-      <CardContent className='p-4'>
-        <h3 className='truncate font-bold text-white'>{title}</h3>
-        <p className='mt-1 text-sm text-gray-300'>
-          {(item as SerieTV).number_of_seasons || 'N/A'} seasons
-        </p>
-      </CardContent>
     </Card>
   );
 
   const renderRecommendedCard = () =>
-    isMovie ? renderNewMovieCard() : renderNewSeriesCard();
+    isMovie ? renderPreviewCard() : renderPreviewCard();
 
   switch (cardType) {
     case 'trending':
       return renderTrendingCard();
     case 'latestMovies':
-      return renderNewMovieCard();
     case 'latestSeries':
-      return renderNewSeriesCard();
     case 'popular':
       return renderRecommendedCard();
     default:

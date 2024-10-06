@@ -1,5 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Episode, Media, Movie, Season, SerieTV } from '../models/Media';
+import {
+  Episode,
+  Media,
+  Movie,
+  Season,
+  SerieTV,
+  VideoDetails
+} from '../models/Media';
 import {
   fetchAiringTodaySeries,
   fetchEpisodes,
@@ -8,12 +15,14 @@ import {
   fetchLatestSeries,
   fetchMediaByGenre,
   fetchMovieDetails,
+  fetchMovieVideos,
   fetchNowPlayingMovies,
   fetchOnTheAirSeries,
   fetchPopularMovies,
   fetchPopularSeries,
   fetchRecommendedMedia,
   fetchSeasons,
+  fetchSeriesVideos,
   fetchTopRatedMovies,
   fetchTopRatedSeries,
   fetchTrendingMedia,
@@ -38,6 +47,8 @@ interface MediaState {
   activeTab: 'movies' | 'series';
   movieDetails: Record<number, Movie>;
   serieDetails: Record<number, SerieTV>;
+  movieVideos: Record<number, VideoDetails[]>;
+  seriesVideos: Record<number, VideoDetails[]>;
   seasons: Record<number, Season[]>;
   episodes: Record<string, Episode[]>;
   movieGenres: { id: number; name: string }[];
@@ -65,6 +76,8 @@ const initialState: MediaState = {
   activeTab: 'movies',
   movieDetails: {},
   serieDetails: {},
+  movieVideos: {},
+  seriesVideos: {},
   seasons: {},
   episodes: {},
   movieGenres: [],
@@ -293,6 +306,22 @@ export const fetchTVDetailsData = createAsyncThunk(
   async (id: number) => {
     const details = await fetchTVDetails(id);
     return { id, details };
+  }
+);
+
+export const fetchMovieVideosData = createAsyncThunk(
+  'media/fetchMovieVideos',
+  async (movieId: number) => {
+    const videos = await fetchMovieVideos(movieId);
+    return { movieId, videos };
+  }
+);
+
+export const fetchSeriesVideosData = createAsyncThunk(
+  'media/fetchSeriesVideos',
+  async (seriesId: number) => {
+    const videos = await fetchSeriesVideos(seriesId);
+    return { seriesId, videos };
   }
 );
 
@@ -539,6 +568,32 @@ const mediaSlice = createSlice({
       .addCase(fetchTVDetailsData.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Error fetching series details';
+      })
+      .addCase(fetchMovieVideosData.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchMovieVideosData.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const { movieId, videos } = action.payload;
+        state.movieVideos[movieId] = videos;
+      })
+      .addCase(fetchMovieVideosData.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Error fetching movie videos';
+      })
+      .addCase(fetchSeriesVideosData.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchSeriesVideosData.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const { seriesId, videos } = action.payload;
+        state.seriesVideos[seriesId] = videos;
+      })
+      .addCase(fetchSeriesVideosData.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Error fetching series videos';
       })
       .addCase(fetchGenresData.pending, (state) => {
         state.isLoading = true;
