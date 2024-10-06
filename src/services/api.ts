@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  Credits,
   Episode,
   Media,
   Movie,
@@ -64,6 +65,16 @@ export const fetchMovieDetails = async (id: number): Promise<Movie> => {
 export const fetchTVDetails = async (id: number): Promise<SerieTV> => {
   const data = await fetchFromAPI(`/tv/${id}`);
   return { ...data, media_type: 'tv' };
+};
+
+export const fetchMovieCredits = async (id: number): Promise<Credits> => {
+  const data = await fetchFromAPI(`/movie/${id}/credits`);
+  return data;
+};
+
+export const fetchTVCredits = async (id: number): Promise<Credits> => {
+  const data = await fetchFromAPI(`/tv/${id}/credits`);
+  return data;
 };
 
 export const fetchNowPlayingMovies = async (
@@ -252,4 +263,28 @@ export const fetchSeriesVideos = async (
 ): Promise<VideoDetails[]> => {
   const response = await apiClient.get(`/tv/${seriesId}/videos`);
   return response.data.results;
+};
+
+export const fetchMoviesSearch = async (query: string): Promise<Media[]> => {
+  const response = await apiClient.get(`/search/movie`, {
+    params: {
+      query
+    }
+  });
+  return response.data.results.map((item: any) => ({
+    ...item,
+    media_type: 'movie'
+  }));
+};
+
+export const fetchSeriesSearch = async (query: string): Promise<Media[]> => {
+  const response = await apiClient.get(`/search/tv`, {
+    params: {
+      query
+    }
+  });
+  return response.data.results.map((item: any) => ({
+    ...item,
+    media_type: 'tv'
+  }));
 };

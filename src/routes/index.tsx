@@ -2,11 +2,11 @@ import { Layout } from '@/components/Layout';
 import { GenreFilterPage } from '@/views/GenreFilterPage';
 import { Home } from '@/views/Home';
 import { LoginPage } from '@/views/LoginPage';
-import { MovieDetailsPage } from '@/views/MovieDetailsPage';
+import { MovieDetailPage } from '@/views/MovieDetailPage';
 import { MoviesPage } from '@/views/MoviesPage';
 import { NotFound } from '@/views/NotFound';
 import { RegisterPage } from '@/views/RegisterPage';
-import { SeriesDetailsPage } from '@/views/SeriesDetailsPage';
+import { SeriesDetailPage } from '@/views/SeriesDetailPage';
 import { SeriesPage } from '@/views/SeriesPage';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -20,12 +20,12 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: '/movie/:id',
-        element: <MovieDetailsPage />
+        path: '/movies/:id',
+        element: <MovieDetailPage />
       },
       {
         path: '/series/:id',
-        element: <SeriesDetailsPage />
+        element: <SeriesDetailPage />
       },
       {
         path: '/login',

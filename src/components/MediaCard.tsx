@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { useQueries } from '@tanstack/react-query';
 import { Clock } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Media, Movie, SerieTV } from '../models/Media';
 import { fetchMovieVideos, fetchSeriesVideos } from '../services/api';
 
@@ -114,7 +115,9 @@ export const MediaCard = ({ item, cardType }: MediaCardProps) => {
       </Card>
 
       <div className='mt-2 px-2'>
-        <h3 className='truncate font-bold text-white'>{title}</h3>
+        <Link to={isMovie ? `/movies/${item.id}` : `/series/${item.id}`}>
+          <h3 className='truncate font-bold text-white'>{title}</h3>
+        </Link>
         <div className='mt-2 flex flex-wrap gap-2'>
           {item.genres.slice(0, 3).map((genre) => (
             <Badge
@@ -131,20 +134,22 @@ export const MediaCard = ({ item, cardType }: MediaCardProps) => {
   );
 
   const renderPreviewCard = () => (
-    <Card
-      className='relative h-auto overflow-hidden border-0 bg-transparent'
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className='relative'>
-        <img
-          src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-          alt={title}
-          className='h-auto w-full object-cover'
-        />
-        {isHovered && renderPreview()}
-      </div>
-    </Card>
+    <Link to={isMovie ? `/movies/${item.id}` : `/series/${item.id}`}>
+      <Card
+        className='relative h-auto overflow-hidden border-0 bg-transparent'
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className='relative'>
+          <img
+            src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+            alt={title}
+            className='h-auto w-full object-cover'
+          />
+          {isHovered && renderPreview()}
+        </div>
+      </Card>
+    </Link>
   );
 
   const renderRecommendedCard = () =>

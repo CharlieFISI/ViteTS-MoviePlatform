@@ -3,8 +3,10 @@ import {
   Episode,
   Media,
   Movie,
+  MovieDetails,
   Season,
   SerieTV,
+  SerieTVDetails,
   VideoDetails
 } from '../models/Media';
 import {
@@ -14,7 +16,9 @@ import {
   fetchLatestMovie,
   fetchLatestSeries,
   fetchMediaByGenre,
+  fetchMovieCredits,
   fetchMovieDetails,
+  fetchMoviesSearch,
   fetchMovieVideos,
   fetchNowPlayingMovies,
   fetchOnTheAirSeries,
@@ -22,10 +26,12 @@ import {
   fetchPopularSeries,
   fetchRecommendedMedia,
   fetchSeasons,
+  fetchSeriesSearch,
   fetchSeriesVideos,
   fetchTopRatedMovies,
   fetchTopRatedSeries,
   fetchTrendingMedia,
+  fetchTVCredits,
   fetchTVDetails,
   fetchUpcomingMovies
 } from '../services/api';
@@ -45,8 +51,8 @@ interface MediaState {
   totalPages: number;
   recommended: Record<string, Media[]>;
   activeTab: 'movies' | 'series';
-  movieDetails: Record<number, Movie>;
-  serieDetails: Record<number, SerieTV>;
+  movieDetails: Record<number, MovieDetails>;
+  serieDetails: Record<number, SerieTVDetails>;
   movieVideos: Record<number, VideoDetails[]>;
   seriesVideos: Record<number, VideoDetails[]>;
   seasons: Record<number, Season[]>;
@@ -57,6 +63,9 @@ interface MediaState {
   error: string | null;
   currentIndex: number;
   isImageLoaded: boolean;
+  searchResults: Media[];
+  isLoadingSearch: boolean;
+  searchError: string | null;
 }
 
 const initialState: MediaState = {
@@ -85,7 +94,10 @@ const initialState: MediaState = {
   isLoading: false,
   error: null,
   currentIndex: 0,
-  isImageLoaded: false
+  isImageLoaded: false,
+  searchResults: [],
+  isLoadingSearch: false,
+  searchError: null
 };
 
 export const fetchTrendingMediaData = createAsyncThunk(
@@ -106,6 +118,18 @@ export const fetchTrendingMediaData = createAsyncThunk(
       ...item,
       ...details[index]
     })) as (Movie | SerieTV)[];
+  }
+);
+
+export const fetchSearchResultsData = createAsyncThunk(
+  'media/fetchSearchResults',
+  async (query: string) => {
+    const [movies, series] = await Promise.all([
+      fetchMoviesSearch(query),
+      fetchSeriesSearch(query)
+    ]);
+
+    return [...movies, ...series];
   }
 );
 
@@ -297,7 +321,8 @@ export const fetchMovieDetailsData = createAsyncThunk(
   'media/fetchMovieDetails',
   async (id: number) => {
     const details = await fetchMovieDetails(id);
-    return { id, details };
+    const credits = await fetchMovieCredits(id);
+    return { id, details: { ...details, credits } as MovieDetails };
   }
 );
 
@@ -305,7 +330,8 @@ export const fetchTVDetailsData = createAsyncThunk(
   'media/fetchTVDetails',
   async (id: number) => {
     const details = await fetchTVDetails(id);
-    return { id, details };
+    const credits = await fetchTVCredits(id);
+    return { id, details: { ...details, credits } as SerieTVDetails };
   }
 );
 
@@ -420,6 +446,9 @@ const mediaSlice = createSlice({
     },
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
+    },
+    clearSearchResults: (state) => {
+      state.searchResults = [];
     }
   },
   extraReducers: (builder) => {
@@ -435,6 +464,18 @@ const mediaSlice = createSlice({
       .addCase(fetchTrendingMediaData.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Error fetching trending media';
+      })
+      .addCase(fetchSearchResultsData.pending, (state) => {
+        state.isLoadingSearch = true;
+        state.error = null;
+      })
+      .addCase(fetchSearchResultsData.fulfilled, (state, action) => {
+        state.searchResults = action.payload;
+        state.isLoadingSearch = false;
+      })
+      .addCase(fetchSearchResultsData.rejected, (state, action) => {
+        state.isLoadingSearch = false;
+        state.error = action.error.message || 'Error fetching search results';
       })
       .addCase(fetchNowPlayingMoviesData.pending, (state) => {
         state.isLoading = true;
@@ -671,7 +712,8 @@ export const {
   setIsImageLoaded,
   resetHeroState,
   setTotalPages,
-  setCurrentPage
+  setCurrentPage,
+  clearSearchResults
 } = mediaSlice.actions;
 
 export default mediaSlice.reducer;

@@ -11,7 +11,7 @@ import {
   fetchTVDetails
 } from '@/services/api';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { Media, Movie, SerieTV } from '../models/Media';
+import { Media, Movie, SerieTV } from '../../models/Media';
 import { RecentlyUpdatedMovieCard } from './RecentlyUpdatedMovieCard';
 
 const QUERY_KEY = 'recentlyUpdated';
@@ -63,8 +63,8 @@ export const RecentlyUpdated = () => {
   }
 
   return (
-    <section className='px-8 mb-12'>
-      <div className='flex items-center justify-between mb-6'>
+    <section className='mb-12 px-8'>
+      <div className='mb-6 flex items-center justify-between'>
         <h2 className='text-2xl font-semibold'>Recently Updated</h2>
       </div>
       <Carousel
@@ -90,8 +90,8 @@ export const RecentlyUpdated = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className='text-black bg-white border border-gray-200 hover:bg-gray-100' />
-        <CarouselNext className='text-black bg-white border border-gray-200 hover:bg-gray-100' />
+        <CarouselPrevious className='border border-gray-200 bg-white text-black hover:bg-gray-100' />
+        <CarouselNext className='border border-gray-200 bg-white text-black hover:bg-gray-100' />
       </Carousel>
     </section>
   );

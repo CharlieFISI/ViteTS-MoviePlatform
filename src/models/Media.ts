@@ -37,6 +37,11 @@ export interface ProductionCompany {
   origin_country: string;
 }
 
+export interface ProductionCountry {
+  iso_3166_1: string;
+  name: string;
+}
+
 export interface MediaItem {
   id: number;
   poster_path: string;
@@ -96,6 +101,7 @@ export interface MediaDetails extends MediaItem {
   tagline: string;
   status: string;
   production_companies: ProductionCompany[];
+  production_countries: ProductionCountry[];
   videos: {
     results: VideoDetails[];
   };
@@ -109,7 +115,7 @@ export interface MovieDetails extends MediaDetails {
   media_type: 'movie';
 }
 
-export interface SeriesTVDetails extends MediaDetails {
+export interface SerieTVDetails extends MediaDetails {
   name: string;
   first_air_date: string;
   number_of_seasons: number;

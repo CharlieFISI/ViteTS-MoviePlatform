@@ -1,5 +1,5 @@
-import { FilterSidebar } from '@/components/mediaPageComponents/FilterSidebar';
-import { MediaContentPage } from '@/components/mediaPageComponents/MediaContentPage';
+import { FilterSidebar } from '@/components/mediaPage/FilterSidebar';
+import { MediaContentPage } from '@/components/mediaPage/MediaContentPage';
 import { useState } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { setCurrentPage } from '../store/mediaSlice';

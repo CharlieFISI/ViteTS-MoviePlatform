@@ -1,5 +1,5 @@
-import { FilterAccordion } from '@/components/genrePageComponents/FilterAccordion';
-import { MediaGenreFiltered } from '@/components/genrePageComponents/MediaGenreFiltered';
+import { FilterAccordion } from '@/components/genrePage/FilterAccordion';
+import { MediaGenreFiltered } from '@/components/genrePage/MediaGenreFiltered';
 import { useState } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { setCurrentPage } from '../store/mediaSlice';

@@ -1,6 +1,6 @@
-import { HeroSection } from '../components/HeroSection';
-import { MediaSection } from '../components/MediaSection';
-import { RecentlyUpdated } from '../components/RecentlyUpdated';
+import { HeroSection } from '../components/homePage/HeroSection';
+import { MediaSection } from '../components/homePage/MediaSection';
+import { RecentlyUpdated } from '../components/homePage/RecentlyUpdated';
 
 export const Home = () => {
   return (

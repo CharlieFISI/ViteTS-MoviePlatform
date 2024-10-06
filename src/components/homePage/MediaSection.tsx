@@ -2,8 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Movie, SerieTV } from '../models/Media';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { Movie, SerieTV } from '../../models/Media';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   fetchAiringTodaySeriesData,
   fetchNowPlayingMoviesData,
@@ -12,9 +12,9 @@ import {
   fetchTrendingMediaData,
   initializeTab,
   setActiveTab
-} from '../store/mediaSlice';
-import { MediaCard } from './MediaCard';
-import { MediaCardSkeleton } from './skeletons/MediaCardSkeleton';
+} from '../../store/mediaSlice';
+import { MediaCard } from '../MediaCard';
+import { MediaCardSkeleton } from '../skeletons/MediaCardSkeleton';
 
 type MediaSectionProps = {
   type: 'trending' | 'latestMovies' | 'latestSeries' | 'popular';

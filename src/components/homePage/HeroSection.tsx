@@ -2,17 +2,19 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Play, Plus } from 'lucide-react';
 import { useEffect } from 'react';
-import { Media, Movie } from '../models/Media';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useNavigate } from 'react-router-dom';
+import { Media, Movie } from '../../models/Media';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   fetchTrendingMediaData,
   setCurrentIndex,
   setIsImageLoaded
-} from '../store/mediaSlice';
-import { HeroSectionSkeleton } from './skeletons/HeroSectionSkeleton';
+} from '../../store/mediaSlice';
+import { HeroSectionSkeleton } from '../skeletons/HeroSectionSkeleton';
 
 export const HeroSection = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const currentIndex = useAppSelector((state) => state.media.currentIndex);
   const isImageLoaded = useAppSelector((state) => state.media.isImageLoaded);
   const trendingMedia = useAppSelector((state) => state.media.trending);
@@ -50,6 +52,11 @@ export const HeroSection = () => {
   const isMovie = (media: Media): media is Movie =>
     media.media_type === 'movie';
 
+  const handleWatchNowClick = () => {
+    const mediaType = isMovie(currentMedia) ? 'movies' : 'series';
+    navigate(`/${mediaType}/${currentMedia.id}`);
+  };
+
   return (
     <section className='relative h-[80vh]'>
       <div className='absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-black' />
@@ -67,6 +74,7 @@ export const HeroSection = () => {
             <Button
               size='lg'
               className='bg-red-600 text-white hover:bg-red-700'
+              onClick={handleWatchNowClick}
             >
               <Play className='mr-2 h-5 w-5' /> Watch Now
             </Button>
