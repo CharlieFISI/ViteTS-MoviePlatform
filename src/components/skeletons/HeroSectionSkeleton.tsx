@@ -2,30 +2,31 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export const HeroSectionSkeleton = () => {
   return (
-    <div className='relative mb-8 h-[calc(70vh-108px)] overflow-hidden bg-gray-900'>
-      <Skeleton className='w-full h-full' />
-      <div className='absolute bottom-0 left-0 max-w-2xl p-8'>
-        <Skeleton className='w-3/4 h-12 mb-4' />
-        <Skeleton className='w-full h-4 mb-2' />
-        <Skeleton className='w-full h-4 mb-2' />
-        <Skeleton className='w-3/4 h-4 mb-6' />
-        <div className='flex space-x-4'>
-          <Skeleton className='w-40 h-14' />
-          <Skeleton className='w-40 h-14' />
+    <section className='relative h-[80vh]'>
+      <div className='absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-black' />
+      <Skeleton className='absolute inset-0 h-full w-full' />
+      <div className='relative z-20 mx-auto flex h-full max-w-7xl flex-col justify-between px-4 py-12'>
+        <div className='flex h-full flex-col items-center justify-center'>
+          <div className='mb-8 flex space-x-4'>
+            <Skeleton className='h-12 w-32 rounded-lg' />
+            <Skeleton className='h-12 w-32 rounded-lg' />
+          </div>
+        </div>
+        <div className='mb-8'>
+          <Skeleton className='mb-4 h-10 w-1/2' />
+          <div className='mb-4 flex items-center space-x-4'>
+            <Skeleton className='h-6 w-12' />
+            <Skeleton className='h-6 w-4' />
+            <Skeleton className='h-6 w-24' />
+            <div className='flex space-x-2'>
+              <Skeleton className='h-6 w-16' />
+              <Skeleton className='h-6 w-16' />
+              <Skeleton className='h-6 w-16' />
+            </div>
+          </div>
+          <Skeleton className='h-24 w-2/3' />
         </div>
       </div>
-      <div className='absolute flex space-x-4 transform -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2'>
-        <Skeleton className='w-48 h-16' />
-        <Skeleton className='w-48 h-16' />
-      </div>
-      <div className='absolute flex space-x-2 transform -translate-x-1/2 bottom-4 left-1/2'>
-        {[...Array(5)].map((_, index) => (
-          <Skeleton
-            key={index}
-            className='w-3 h-3 rounded-full'
-          />
-        ))}
-      </div>
-    </div>
+    </section>
   );
 };

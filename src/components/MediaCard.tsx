@@ -3,9 +3,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Clock, Star } from 'lucide-react';
 import { Media, Movie, SerieTV } from '../models/Media';
 
-interface MovieCardProps {
+interface MediaCardProps {
   item: Media;
-  cardType: 'trending' | 'newMovies' | 'newSeries' | 'recommended';
+  cardType:
+    | 'trending'
+    | 'latestMovies'
+    | 'latestSeries'
+    | 'popular'
+    | 'recommended';
 }
 
 const formatDuration = (minutes: number) => {
@@ -14,7 +19,7 @@ const formatDuration = (minutes: number) => {
   return `${hours}h ${remainingMinutes}m`;
 };
 
-export const MovieCard = ({ item, cardType }: MovieCardProps) => {
+export const MediaCard = ({ item, cardType }: MediaCardProps) => {
   const isMovie = item.media_type === 'movie';
   const title = isMovie ? (item as Movie).title : (item as SerieTV).name;
 
@@ -109,11 +114,11 @@ export const MovieCard = ({ item, cardType }: MovieCardProps) => {
   switch (cardType) {
     case 'trending':
       return renderTrendingCard();
-    case 'newMovies':
+    case 'latestMovies':
       return renderNewMovieCard();
-    case 'newSeries':
+    case 'latestSeries':
       return renderNewSeriesCard();
-    case 'recommended':
+    case 'popular':
       return renderRecommendedCard();
     default:
       return null;

@@ -10,11 +10,10 @@ const Header = () => {
 
   const navItems = [
     { name: 'Home', path: ROUTES.HOME },
-    { name: 'Genre', path: '#' },
+    { name: 'Genre', path: ROUTES.GENRES },
     { name: 'Country', path: '#' },
-    { name: 'Movies', path: '#' },
-    { name: 'Series', path: '#' },
-    { name: 'Animation', path: '#' }
+    { name: 'Movies', path: ROUTES.MOVIES },
+    { name: 'Series', path: ROUTES.SERIES }
   ];
 
   return (
@@ -51,12 +50,14 @@ const Header = () => {
           ))}
         </nav>
         <div className='flex items-center px-6 space-x-2'>
-          <Button
-            variant='ghost'
-            className='text-lg font-semibold text-white hover:text-black'
-          >
-            Login/Signup
-          </Button>
+          <Link to={ROUTES.LOGIN}>
+            <Button
+              variant='ghost'
+              className='text-lg font-semibold text-white hover:text-black'
+            >
+              Login/Signup
+            </Button>
+          </Link>
           <Button
             variant='ghost'
             size='icon'

@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import heroReducer from './heroSlice';
 import mediaReducer from './mediaSlice';
+import userReducer from './userSlice';
 
 export const store = configureStore({
   reducer: {
-    media: mediaReducer,
-    hero: heroReducer
+    user: userReducer,
+    media: mediaReducer
   }
 });
 

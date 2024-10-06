@@ -1,64 +1,45 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useQuery } from '@tanstack/react-query';
 import { Play, Plus } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { Media, Movie } from '../models/Media';
-import { fetchMovieDetails, fetchTrendingMedia } from '../services/api';
-import { setCurrentIndex, setIsImageLoaded } from '../store/heroSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import {
+  fetchTrendingMediaData,
+  setCurrentIndex,
+  setIsImageLoaded
+} from '../store/mediaSlice';
 import { HeroSectionSkeleton } from './skeletons/HeroSectionSkeleton';
 
 export const HeroSection = () => {
   const dispatch = useAppDispatch();
-  const currentIndex = useAppSelector((state) => state.hero.currentIndex);
-  const isImageLoaded = useAppSelector((state) => state.hero.isImageLoaded);
+  const currentIndex = useAppSelector((state) => state.media.currentIndex);
+  const isImageLoaded = useAppSelector((state) => state.media.isImageLoaded);
+  const trendingMedia = useAppSelector((state) => state.media.trending);
+  const isLoading = useAppSelector((state) => state.media.isLoading);
+  const error = useAppSelector((state) => state.media.error);
 
-  const {
-    data: trendingMedia,
-    isLoading: isLoadingTrending,
-    error: errorTrending
-  } = useQuery<Media[]>({
-    queryKey: ['trendingMedia'],
-    queryFn: fetchTrendingMedia
-  });
-
-  const trendingMovies = useMemo(
-    () =>
-      trendingMedia?.filter(
-        (item): item is Movie => item.media_type === 'movie'
-      ) || [],
-    [trendingMedia]
-  );
-
-  const currentMovie = trendingMovies[currentIndex];
-
-  const {
-    data: movieDetails,
-    isLoading: isLoadingDetails,
-    error: errorDetails
-  } = useQuery<Movie>({
-    queryKey: ['movieDetails', currentMovie?.id],
-    queryFn: () => fetchMovieDetails(currentMovie.id),
-    enabled: !!currentMovie
-  });
+  const currentMedia = trendingMedia[currentIndex];
 
   useEffect(() => {
-    if (trendingMovies.length > 0) {
+    dispatch(fetchTrendingMediaData(7));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (trendingMedia.length > 0) {
       const timer = setInterval(() => {
-        const newIndex =
-          (currentIndex + 1) % Math.min(trendingMovies.length, 5);
+        const newIndex = (currentIndex + 1) % Math.min(trendingMedia.length, 5);
         dispatch(setCurrentIndex(newIndex));
         dispatch(setIsImageLoaded(false));
       }, 7000);
 
       return () => clearInterval(timer);
     }
-  }, [trendingMovies, currentIndex, dispatch]);
+  }, [trendingMedia, currentIndex, dispatch]);
 
-  if (isLoadingTrending || isLoadingDetails) return <HeroSectionSkeleton />;
-  if (errorTrending || errorDetails) return <div>Error fetching movies</div>;
-  if (!currentMovie || !movieDetails) return null;
+  if (isLoading) return <HeroSectionSkeleton />;
+  if (error) return <div>Error fetching media: {error}</div>;
+  if (!currentMedia) return null;
 
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
@@ -66,12 +47,15 @@ export const HeroSection = () => {
     return `${hours}h ${remainingMinutes}m`;
   };
 
+  const isMovie = (media: Media): media is Movie =>
+    media.media_type === 'movie';
+
   return (
     <section className='relative h-[80vh]'>
       <div className='absolute inset-0 z-10 bg-gradient-to-b from-transparent via-transparent to-black' />
       <img
-        src={`https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`}
-        alt={currentMovie.title}
+        src={`https://image.tmdb.org/t/p/original${currentMedia.backdrop_path}`}
+        alt={isMovie(currentMedia) ? currentMedia.title : currentMedia.name}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
           isImageLoaded ? 'opacity-100' : 'opacity-0'
         }`}
@@ -97,14 +81,26 @@ export const HeroSection = () => {
         </div>
         <div className='mb-8'>
           <h1 className='mb-4 text-4xl font-bold text-white md:text-6xl'>
-            {currentMovie.title}
+            {isMovie(currentMedia) ? currentMedia.title : currentMedia.name}
           </h1>
           <div className='mb-4 flex items-center space-x-4 text-white'>
-            <span>{new Date(currentMovie.release_date).getFullYear()}</span>
+            <span>
+              {new Date(
+                isMovie(currentMedia)
+                  ? currentMedia.release_date
+                  : currentMedia.first_air_date
+              ).getFullYear()}
+            </span>
             <span>•</span>
-            <span>{formatDuration(movieDetails.runtime)}</span>
+            <span>
+              {isMovie(currentMedia)
+                ? formatDuration(currentMedia.runtime)
+                : `${currentMedia.number_of_seasons} ${
+                    currentMedia.number_of_seasons > 1 ? 'seasons' : 'season'
+                  }`}
+            </span>
             <div className='flex space-x-2'>
-              {movieDetails.genres.slice(0, 3).map((genre) => (
+              {currentMedia.genres.slice(0, 3).map((genre) => (
                 <Badge
                   key={genre.id}
                   variant='outline'
@@ -115,7 +111,7 @@ export const HeroSection = () => {
               ))}
             </div>
           </div>
-          <p className='max-w-xl text-lg text-white'>{currentMovie.overview}</p>
+          <p className='max-w-xl text-lg text-white'>{currentMedia.overview}</p>
         </div>
       </div>
     </section>

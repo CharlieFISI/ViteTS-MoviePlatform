@@ -1,5 +1,5 @@
 import { HeroSection } from '../components/HeroSection';
-import { MovieSection } from '../components/MovieSection';
+import { MediaSection } from '../components/MediaSection';
 import { RecentlyUpdated } from '../components/RecentlyUpdated';
 
 export const Home = () => {
@@ -8,21 +8,21 @@ export const Home = () => {
       <HeroSection />
       <div className='mx-auto max-w-7xl space-y-12 px-4 py-12'>
         <RecentlyUpdated />
-        <MovieSection
+        <MediaSection
           type='trending'
           title='Trending'
         />
-        <MovieSection
-          type='newMovies'
+        <MediaSection
+          type='latestMovies'
           title='New Release - Movies'
         />
-        <MovieSection
-          type='newSeries'
+        <MediaSection
+          type='latestSeries'
           title='New Release - Series'
         />
-        <MovieSection
-          type='recommended'
-          title='Recommended'
+        <MediaSection
+          type='popular'
+          title='Popular'
         />
       </div>
     </div>
