@@ -9,6 +9,7 @@ import { RegisterPage } from '@/views/RegisterPage';
 import { SeriesDetailPage } from '@/views/SeriesDetailPage';
 import { SeriesPage } from '@/views/SeriesPage';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -20,24 +21,29 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: '/movies/:id',
-        element: <MovieDetailPage />
-      },
-      {
-        path: '/series/:id',
-        element: <SeriesDetailPage />
-      },
-      {
-        path: '/genres',
-        element: <GenreFilterPage />
-      },
-      {
-        path: '/movies',
-        element: <MoviesPage />
-      },
-      {
-        path: '/series',
-        element: <SeriesPage />
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: '/movies/:id',
+            element: <MovieDetailPage />
+          },
+          {
+            path: '/series/:id',
+            element: <SeriesDetailPage />
+          },
+          {
+            path: '/genres',
+            element: <GenreFilterPage />
+          },
+          {
+            path: '/movies',
+            element: <MoviesPage />
+          },
+          {
+            path: '/series',
+            element: <SeriesPage />
+          }
+        ]
       }
     ]
   },
