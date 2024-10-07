@@ -1,119 +1,74 @@
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Film } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import * as z from 'zod';
-
-const loginSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address' }),
-  password: z
-    .string()
-    .min(8, { message: 'Password must be at least 8 characters long' })
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
 
 export const LoginPage = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema)
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log('Login data:', data);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Login attempt', { email, password });
   };
 
   return (
-    <div className='flex min-h-screen items-center justify-center bg-black px-4'>
-      <Card className='w-full max-w-md border-gray-800 bg-gray-900 text-white'>
-        <CardHeader className='space-y-1'>
-          <div className='mb-4 flex items-center justify-center'>
-            <Film
-              size={40}
-              className='text-[#dc2626]'
-            />
-          </div>
-          <CardTitle className='text-center text-2xl font-bold'>
-            Welcome Back
-          </CardTitle>
-          <CardDescription className='text-center text-gray-400'>
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4'
+    <div className="flex min-h-screen items-center justify-center bg-black bg-opacity-75 bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover bg-center bg-blend-overlay">
+      <div className='w-full max-w-md rounded-lg bg-black bg-opacity-75 p-8'>
+        <h1 className='mb-6 text-3xl font-bold text-white'>Sign In</h1>
+        <form
+          onSubmit={handleSubmit}
+          className='space-y-4'
+        >
+          <Input
+            type='email'
+            placeholder='Email or phone number'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className='border-none bg-gray-700 text-white'
+            required
+          />
+          <Input
+            type='password'
+            placeholder='Password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className='border-none bg-gray-700 text-white'
+            required
+          />
+          <Button
+            type='submit'
+            className='w-full bg-red-600 text-white hover:bg-red-700'
           >
-            <div className='space-y-2'>
-              <Label
-                htmlFor='email'
-                className='text-gray-200'
-              >
-                Email
-              </Label>
-              <Input
-                id='email'
-                type='email'
-                placeholder='your@email.com'
-                {...register('email')}
-                className='border-gray-700 bg-gray-800 text-white placeholder-gray-500'
+            Sign In
+          </Button>
+          <div className='flex items-center justify-between text-sm text-gray-400'>
+            <div className='flex items-center'>
+              <Checkbox
+                id='remember'
+                className='mr-2'
               />
-              {errors.email && (
-                <p className='text-sm text-[#dc2626]'>{errors.email.message}</p>
-              )}
+              <label htmlFor='remember'>Remember me</label>
             </div>
-            <div className='space-y-2'>
-              <Label
-                htmlFor='password'
-                className='text-gray-200'
-              >
-                Password
-              </Label>
-              <Input
-                id='password'
-                type='password'
-                placeholder='••••••••'
-                {...register('password')}
-                className='border-gray-700 bg-gray-800 text-white placeholder-gray-500'
-              />
-              {errors.password && (
-                <p className='text-sm text-[#dc2626]'>
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-            <Button
-              type='submit'
-              className='w-full bg-[#dc2626] text-white hover:bg-[#b91c1c]'
+            <Link
+              to='/forgot-password'
+              className='hover:underline'
             >
-              Sign In
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className='flex flex-col items-center'>
+              Need help?
+            </Link>
+          </div>
+        </form>
+        <p className='mt-4 text-gray-400'>
+          New to MovieStream?{' '}
           <Link
             to='/register'
-            className='mt-2 text-gray-400 hover:text-white'
+            className='text-white hover:underline'
           >
-            Don't have an account? Sign Up
+            Sign up now
           </Link>
-        </CardFooter>
-      </Card>
+        </p>
+      </div>
     </div>
   );
 };

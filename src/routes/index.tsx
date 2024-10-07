@@ -28,14 +28,6 @@ const router = createBrowserRouter([
         element: <SeriesDetailPage />
       },
       {
-        path: '/login',
-        element: <LoginPage />
-      },
-      {
-        path: '/register',
-        element: <RegisterPage />
-      },
-      {
         path: '/genres',
         element: <GenreFilterPage />
       },
@@ -48,6 +40,14 @@ const router = createBrowserRouter([
         element: <SeriesPage />
       }
     ]
+  },
+  {
+    path: '/login',
+    element: <LoginPage />
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />
   },
   {
     path: '*',
